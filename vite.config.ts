@@ -9,6 +9,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@tests": path.resolve(__dirname, "./src/__tests__"),
+      "@mocks": path.resolve(__dirname, "./src/__mocks__"),
     },
   },
   plugins: [react()],

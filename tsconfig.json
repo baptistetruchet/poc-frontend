@@ -26,6 +26,12 @@
       "@/*": [
         "src/*"
       ],
+      "@tests/*": [
+        "src/__tests__/*"
+      ],
+      "@mocks/*": [
+        "src/__mocks__/*"
+      ]
     },
     "types": [
       "vitest/globals"
