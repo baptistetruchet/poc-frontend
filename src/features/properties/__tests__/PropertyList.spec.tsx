@@ -1,6 +1,7 @@
 import { rest } from "msw";
 import { render, screen } from "@tests/utils";
 import { server } from "@mocks/server";
+import { BASE_URL } from "@/api/config";
 import PropertyList from "../PropertyList";
 
 describe("<PropertyList />", () => {
@@ -12,7 +13,7 @@ describe("<PropertyList />", () => {
 
   it("handles server error", async () => {
     server.use(
-      rest.get("https://example.com/api/properties", (_, res, ctx) => {
+      rest.get(`${BASE_URL}/api/properties`, (_, res, ctx) => {
         return res(ctx.status(500), ctx.json("Something went wrong"));
       }),
     );
