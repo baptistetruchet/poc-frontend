@@ -10,13 +10,14 @@ function PropertyList() {
 
   return (
     <div>
-      <Link to="/">back</Link>
+      <Link to="..">back</Link>
       <h1>Properties</h1>
       <ul>
         {data.map((property) => (
           <li key={property.id}>{property.name}</li>
         ))}
       </ul>
+      <Link to="new">new property</Link>
     </div>
   );
 }
