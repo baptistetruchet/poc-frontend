@@ -1,33 +1,36 @@
 import {
   useForm,
-  SubmitHandler,
   FormProvider,
   useFormContext,
   FieldValues,
   Path,
   UseFormProps,
+  SubmitHandler,
 } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-const formSchema = z.object({
-  name: z.string().min(5, { message: "Length must be > 5" }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TContext = unknown,
+  TTransformedValues extends FieldValues | undefined = undefined,
+> = UseFormProps<TFieldValues, TContext> & {
+  children: React.ReactNode;
+  onSubmit: TTransformedValues extends FieldValues
+    ? SubmitHandler<TTransformedValues>
+    : SubmitHandler<TFieldValues>;
+};
 
 function Form<
   TFieldValues extends FieldValues = FieldValues,
   TContext = unknown,
+  TTransformedValues extends FieldValues | undefined = undefined,
 >({
   children,
   onSubmit,
   ...props
-}: UseFormProps<TFieldValues, TContext> & {
-  onSubmit: SubmitHandler<TFieldValues>;
-  children: React.ReactNode;
-}) {
-  const methods = useForm<TFieldValues>(props);
+}: FormProps<TFieldValues, TContext, TTransformedValues>) {
+  const methods = useForm<TFieldValues, TContext, TTransformedValues>(props);
 
   return (
     <FormProvider {...methods}>
@@ -56,13 +59,21 @@ function Input<TFieldValues extends FieldValues = FieldValues>({
   );
 }
 
+Form.Input = Input;
+
+const formSchema = z.object({
+  name: z.string().min(5, { message: "Length must be > 5" }),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 function PropertyForm() {
   return (
     <Form<FormValues>
       resolver={zodResolver(formSchema)}
       onSubmit={(data) => window.alert(JSON.stringify(data))}
     >
-      <Input<FormValues> name="name" />
+      <Form.Input<FormValues> name="name" />
       <input type="submit" />
     </Form>
   );
