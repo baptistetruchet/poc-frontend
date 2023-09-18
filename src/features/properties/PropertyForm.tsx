@@ -1,4 +1,11 @@
-import { useForm, SubmitHandler } from "react-hook-form";
+import {
+  useForm,
+  SubmitHandler,
+  FormProvider,
+  useFormContext,
+  FieldValues,
+  Path,
+} from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -8,22 +15,40 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-function PropertyForm() {
+function Input<TFieldValues extends FieldValues = FieldValues>({
+  name,
+  ...props
+}: {
+  name: Path<TFieldValues>;
+}) {
   const {
     register,
-    handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-  });
-  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data);
+  } = useFormContext<TFieldValues>();
+  const error = errors[name];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input {...register("name")} />
-      {errors.name ? <p>{errors.name.message}</p> : null}
-      <input type="submit" />
-    </form>
+    <div>
+      <input {...props} {...register(name)} />
+      {error ? <p>{error.message?.toString()}</p> : null}
+    </div>
+  );
+}
+
+function PropertyForm() {
+  const methods = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+  });
+  const onSubmit: SubmitHandler<FormValues> = (data) =>
+    window.alert(JSON.stringify(data));
+
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <Input<FormValues> name="name" />
+        <input type="submit" />
+      </form>
+    </FormProvider>
   );
 }
 
