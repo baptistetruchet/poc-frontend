@@ -5,6 +5,7 @@ import {
   useFormContext,
   FieldValues,
   Path,
+  UseFormProps,
 } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +15,26 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+function Form<
+  TFieldValues extends FieldValues = FieldValues,
+  TContext = unknown,
+>({
+  children,
+  onSubmit,
+  ...props
+}: UseFormProps<TFieldValues, TContext> & {
+  onSubmit: SubmitHandler<TFieldValues>;
+  children: React.ReactNode;
+}) {
+  const methods = useForm<TFieldValues>(props);
+
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)}>{children}</form>
+    </FormProvider>
+  );
+}
 
 function Input<TFieldValues extends FieldValues = FieldValues>({
   name,
@@ -36,19 +57,14 @@ function Input<TFieldValues extends FieldValues = FieldValues>({
 }
 
 function PropertyForm() {
-  const methods = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-  });
-  const onSubmit: SubmitHandler<FormValues> = (data) =>
-    window.alert(JSON.stringify(data));
-
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <Input<FormValues> name="name" />
-        <input type="submit" />
-      </form>
-    </FormProvider>
+    <Form<FormValues>
+      resolver={zodResolver(formSchema)}
+      onSubmit={(data) => window.alert(JSON.stringify(data))}
+    >
+      <Input<FormValues> name="name" />
+      <input type="submit" />
+    </Form>
   );
 }
 
