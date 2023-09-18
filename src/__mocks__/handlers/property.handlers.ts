@@ -1,5 +1,5 @@
 import { rest } from "msw";
-import { Property } from "@/api/ressources/properties";
+import { Property } from "@/api/resources/properties";
 import { BASE_URL } from "@/api/config";
 
 const handlers = [
