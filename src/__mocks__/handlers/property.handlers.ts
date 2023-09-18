@@ -15,7 +15,6 @@ const handlers = [
         {
           id: 2,
           name: "House 2",
-          type: "house",
         },
       ]),
     );

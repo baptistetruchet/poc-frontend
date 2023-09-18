@@ -1,11 +1,11 @@
-import { QueryFunctionContext, QueryKey } from "@tanstack/react-query";
+import { QueryFunctionContext } from "@tanstack/react-query";
 import { z } from "zod";
 import { BASE_URL } from "../config";
 
 const propertySchema = z.object({
   id: z.number(),
   name: z.string(),
-  type: z.enum(["house", "flat", "bungalow"]),
+  type: z.enum(["house", "flat", "bungalow"]).optional(),
 });
 
 export type Property = z.infer<typeof propertySchema>;
@@ -14,9 +14,9 @@ export type PropertyFilter = {
   type?: Property["type"] | Property["type"][];
 };
 
-export async function getAll<TPageParam = unknown>(
+export async function getAll(
   filter?: PropertyFilter,
-  ctx?: QueryFunctionContext<QueryKey, TPageParam>,
+  ctx?: QueryFunctionContext,
 ) {
   const params = new URLSearchParams();
   if (filter?.type) {
